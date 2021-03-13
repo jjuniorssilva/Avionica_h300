@@ -1,6 +1,6 @@
 void rotinas(int op){
   if(op==0){
-    if(millis()-ciclo>=500){
+    if(millis()-ciclo>=1000){
       ciclo=millis();
       rotinas(1);
     }

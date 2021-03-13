@@ -1,8 +1,18 @@
 
 //----------bmp280-------------------
 void getDataBMP(){
+  float alt0=0,alt1=0,alt2=0,alt3=0,media_alt,percent=0.05;
   packet_1.data.pressao_bmp = bmp.readPressure();
-  packet_1.data.alt_bmp = bmp.readAltitude(1013.25);// this should be adjusted to your local forcase
+  alt0=bmp.readAltitude(1013.25);
+  alt1=bmp.readAltitude(1013.25);// 
+  alt2=bmp.readAltitude(1013.25);// 
+  alt3=bmp.readAltitude(1013.25);// 
+  media_alt = (alt1+alt2+alt3)/3;
+  if(alt0>=(media_alt+(media_alt*percent)) || alt0<=(media_alt-(media_alt*percent))){
+    packet_1.data.alt_bmp = media_alt;
+  }else{
+    packet_1.data.alt_bmp =alt0;
+  }
 }
 bool check_BMP(){
 
@@ -27,8 +37,19 @@ bool check_MPU(){
 
 }
 //----------EEPROM-------------------
-void sendDataEEPROM(){
- 
+void writeEEPROM(int deviceaddress, unsigned int eeaddress, byte data ) { // salva o dado (byte) na posição eeaddress
+  Wire.beginTransmission(deviceaddress);
+  Wire.write((int)(eeaddress >> 8));   // MSB
+  Wire.write((int)(eeaddress & 0xFF)); // LSB
+  Wire.write(data);
+  Wire.endTransmission();
+  delay(4);
+}
+void sendDataEEPROM(){ // consumo médio de tempo 160ms
+ for(int i=1;i<=40;i++){ // no struct o dados relevantes então no array de bytes [1-40]
+  writeEEPROM(0x50,eeaddress,packet_1.data_byte[i]);
+  eeaddress++;
+ }
 }
 bool check_EEPROM(){
 
