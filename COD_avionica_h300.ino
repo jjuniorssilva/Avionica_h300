@@ -18,12 +18,13 @@ Servo servoPara;
 Adafruit_BMP280 bmp;
 
 int rotina=0,ciclo=0,altura_max=50,altura_ant=0;
-bool status_LoRa=false;
+bool status_LoRa=false,status_alt_rotina=false;
 
 //Aqui as variaveis serão convertada em m array de bytes para a trsmissão;
 union packet_type_1 {
   //o struct agrupa os dados e o union propociona a recuparação dos bytes desse grupo;
    struct data{
+      byte type;
       float pressao_bmp; 
       float alt_bmp;
       float batery;

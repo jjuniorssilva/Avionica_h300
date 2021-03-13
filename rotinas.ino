@@ -39,6 +39,11 @@ void rotinas(int op){
     }
   }
 }
-void update_rotina(){
-  
+void update_rotina(){ // a ideia aqui é que >=1m de altura o modo de voo mude e ao retornar a <=1m de altura mude de novo;
+  if(packet_1.data.alt_bmp>=1 && status_alt_rotina==false){
+    status_alt_rotina=true;
+    rotina=1;
+  }else if(packet_1.data.alt_bmp<=1 && status_alt_rotina==true){
+    rotina=2;
+  }
 }
