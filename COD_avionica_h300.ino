@@ -5,14 +5,15 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
 
-#define SS 18
-#define RST 14
-#define DI0 26
+#define pin_batery 3
+#define ss_lora 10
+#define rst_lora 9
+#define dio0_lora 2
 #define BAND 433E6
 #define pinServo 5
-#define led1 5
-#define led2 5
-#define led3 5
+#define led1 1
+#define led2 3
+#define led3 4
 
 Servo servoPara;
 Adafruit_BMP280 bmp;
@@ -25,7 +26,6 @@ unsigned int eeaddress=0;
 union packet_type_1 {
   //o struct agrupa os dados e o union propociona a recuparação dos bytes desse grupo;
    struct data{
-      byte type;
       float pressao_bmp; 
       float alt_bmp;
       float batery;
@@ -48,11 +48,11 @@ void setup() {
   Serial.begin(9600);
   SPI.begin ();
   servoPara.attach(pinServo);
-  LoRa.setPins (SS, RST);
+  LoRa.setPins (ss_lora, rst_lora,dio0_lora);
   LoRa.setTxPower(20);//potência TX em dB, o padrão é 17
-  //LoRa.setFrequency(433E6); // seta a frequencia do lora
+  //LoRa.setFrequency(BAND); // seta a frequencia do lora
   LoRa.onReceive(onReceive);//callback de recebimeno de dados do lora
-  if (!LoRa.begin(433E6)){
+  if (!LoRa.begin(BAND)){
     Serial.println(" LoRa Falhou!");
     while (1);
   }

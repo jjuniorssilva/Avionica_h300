@@ -31,7 +31,7 @@ void rotinas(int op){
       if(packet_1.data.error=0)packet_1.data.error=2;
     }
     //----------trasmissão---------
-    SendStruct(&packet_1.data_byte,sizeof(packet_1.data));
+    SendStruct();
   }else{
       if(millis()-ciclo>=1000){
       ciclo=millis();

@@ -82,9 +82,10 @@ void onReceive(int packetSize) { // esse callback recebe a resposta e verificar 
   if(check==255)status_LoRa=true;
  }
 }
-void SendStruct(const void *TheStructure, uint16_t size_) { // será usado no pré e in voo 
+void SendStruct() { // será usado no pré e in voo 
+  packet_1.data.checksum = get_checksum_struct();
   LoRa.beginPacket();
-  LoRa.write((uint8_t *) TheStructure, size_);
+  LoRa.write((uint8_t *) &packet_1.data_byte, sizeof(packet_1.data));
   LoRa.endPacket();
   digitalWrite(led3, HIGH);
   delay(20);
@@ -98,9 +99,16 @@ void SendDataBatery(float batery) { // será chamado no pós voo
   delay(20);
   digitalWrite(led3, LOW);
 }
+byte get_checksum_struct(){
+  byte checksum = 0;
+  for(int i=0; i<sizeof(packet_1.data); i++){
+   checksum ^= packet_1.data_byte[i];
+  }
+  return (255-checksum);
+}
 // ------------Bateria-------
 float getDataBatery(){
-  int val = analogRead(0);
+  int val = analogRead(pin_batery);
   packet_1.data.batery = map(val, 0, 1023, 0, 100);// precisa ser adaptado
   return packet_1.data.batery;
 }
