@@ -3,7 +3,7 @@ bool check_direction(){
   return false;
 }
 bool check_height(){
- if(packet_1.data.alt_bmp<=altura_max)return true; // se a altura atual é menor ou igual a máxima(altura de abertura do paraquedas)
+ if(packet_1.data.alt_bmp>=altura_min)return true; // se a altura atual é menor ou igual a máxima(altura de abertura do paraquedas)
  return false;
 }
 bool check_angle(){
