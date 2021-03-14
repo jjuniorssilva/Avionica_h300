@@ -6,7 +6,7 @@ void rotinas(int op){
     }
   }else if(op==1){
     //--------coleta----------
-    if(check_BMP()==true && check_MPU()==true){ // verificar os sensores
+    if(check_I2C(0x77)==true && check_I2C(0x68)==true){ // realiza a checagem da conexão com os modulos
       digitalWrite(led2, LOW);
       getDataBMP(); // coleta dados do bmp
       getDataMPU(); // coleta dados do mpu
@@ -35,7 +35,7 @@ void rotinas(int op){
   }else{
       if(millis()-ciclo>=1000){
       ciclo=millis();
-      SendDataBatery(getdataBatery_end()); //enviar o status da bateria
+      SendDataBatery(getDataBatery()); //enviar o status da bateria
     }
   }
 }
