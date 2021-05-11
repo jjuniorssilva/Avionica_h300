@@ -21,9 +21,9 @@ void getDataBMP(){
   alt3=bmp.readAltitude();
   media_alt = (alt1+alt2+alt3)/3;
   if(alt0>=(media_alt+(media_alt*percent)) || alt0<=(media_alt-(media_alt*percent))){ // verifica se o valor coletado está dentro do intervalo gerado pela média
-    packet_1.data.alt_bmp = media_alt - packet_1.data.alt_inicial;
+    packet_1.data.alt_bmp = media_alt - alt_init_eeprom.alt_inicial;
   }else{
-    packet_1.data.alt_bmp =alt0 - packet_1.data.alt_inicial;
+    packet_1.data.alt_bmp =alt0 - alt_init_eeprom.alt_inicial;
   }
 }
 // ----checagem da conexão i2c------
@@ -69,11 +69,14 @@ byte readEEPROM(int deviceaddress, unsigned int eeaddress ) {
   return data;
 }
 void sendDataEEPROM(){ // consumo médio de tempo 160ms
- for(int i=0;i<40;i++){ // no struct, os dados relevantes então no array de bytes [1-40]
+ for(int i=0;i<44;i++){ // no struct, os dados relevantes então no array de bytes [1-44]
   if(address_eeprom.eeaddress<65536){ // impede de gravar dados em um endereço inexistente 
     writeEEPROM(0x50,address_eeprom.eeaddress,packet_1.data_byte[i]);
     address_eeprom.eeaddress++;
-    send_backup_address();
+    for(int i=0; i<4;i++){
+      send_backup_eeprom(i,address_eeprom.eeaddress_byte[i]);
+    }
+    
   }else{
     Serial.println("Memoria eeprom cheia! -> ultimo endereço: "+String(address_eeprom.eeaddress));
   }
@@ -86,15 +89,11 @@ bool check_EEPROM(){ // Grava um byte na memoria e faz a leitura, se for igual p
   }
   return false;
 }
-void send_backup_address(){
-  for(int i=0;i<4;i++){
-    EEPROM.write(i, address_eeprom.eeaddress_byte[i]);
-  }
+void send_backup_eeprom(long address, byte data){
+    EEPROM.write(address, data);
 }
-void get_backup_address(){
-  for(int i=0;i<4;i++){
-    address_eeprom.eeaddress_byte[i] = EEPROM.read(i);
-  }
+byte get_backup_eeprom(long address){
+   return EEPROM.read(address);
 }
 // ------------Bateria-------
 float getDataBatery(){

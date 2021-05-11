@@ -4,7 +4,16 @@ void rotinas(int op){
       if(check_I2C(0x77)==true && check_I2C(0x68)==true){ // realiza a checagem da conexão com os modulos
         digitalWrite(led2, LOW);
         if(status_calib==true){
-          packet_1.data.alt_inicial = calibracao_alt();
+          if(get_backup_eeprom(4)!=0){
+            for(int i=4; i<7;i++){
+              alt_init_eeprom.alt_inicial_byte[i]=get_backup_eeprom(i);
+            }
+          }else{
+            alt_init_eeprom.alt_inicial = calibracao_alt();
+            for(int i=4; i<7;i++){
+              send_backup_eeprom(i,alt_init_eeprom.alt_inicial_byte[i]);
+            }
+          }
           status_calib=false;
         }
       }else{
