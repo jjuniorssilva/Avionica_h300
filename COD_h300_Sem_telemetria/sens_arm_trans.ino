@@ -15,6 +15,7 @@ float calibracao_alt(){
 void getDataBMP(){
   float alt0=0,alt1=0,alt2=0,alt3=0,media_alt,percent=0.05;
   packet_1.data.pressao_bmp = bmp.readPressure();
+  packet_1.data.temp_bmp = bmp.readTemperature();
   alt0=bmp.readAltitude();
   alt1=bmp.readAltitude();
   alt2=bmp.readAltitude(); 
@@ -44,7 +45,7 @@ void getDataMPU(){
   packet_1.data.AcX_mpu=Wire.read()<<8|Wire.read();  //0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)     
   packet_1.data.AcY_mpu=Wire.read()<<8|Wire.read();  //0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
   packet_1.data.AcZ_mpu=Wire.read()<<8|Wire.read();  //0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
-  packet_1.data.Tmp_mpu=Wire.read()<<8|Wire.read();  //0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
+  Wire.read()<<8|Wire.read();  //0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
   packet_1.data.GyX_mpu=Wire.read()<<8|Wire.read();  //0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
   packet_1.data.GyY_mpu=Wire.read()<<8|Wire.read();  //0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
   packet_1.data.GyZ_mpu=Wire.read()<<8|Wire.read();  //0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
@@ -76,7 +77,6 @@ void sendDataEEPROM(){ // consumo médio de tempo 160ms
     for(int i=0; i<4;i++){
       send_backup_eeprom(i,address_eeprom.eeaddress_byte[i]);
     }
-    
   }else{
     Serial.println("Memoria eeprom cheia! -> ultimo endereço: "+String(address_eeprom.eeaddress));
   }

@@ -34,6 +34,7 @@ void rotinas(int op){
           if(check_angle){
             servo_control(179); // aciona o servo para liberar o paraquedas parametro:angulo
             digitalWrite(led3, HIGH);
+            send_backup_eeprom(12,254);
           }
         }
       }

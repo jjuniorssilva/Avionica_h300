@@ -18,18 +18,18 @@ int rotina=0,ciclo=0,altura_min=50,altura_ant=0;
 bool status_LoRa=false,status_alt_rotina=false, status_calib=true;
 
 
-//Aqui as variaveis serão convertada em m array de bytes para a trsmissão;
+//Aqui as variaveis serão convertada em m array de bytes para a transmissão;
 union packet_type_1 {
   //o struct agrupa os dados e o union propociona a recuparação dos bytes desse grupo;
    struct data{
       long time_atual;
       float pressao_bmp; 
       float alt_bmp;
+      float temp_bmp;
       float batery;
       float AcX_mpu;
       float AcY_mpu;
       float AcZ_mpu;
-      float Tmp_mpu;
       float GyX_mpu;
       float GyY_mpu;
       float GyZ_mpu;
@@ -59,16 +59,23 @@ void setup() {
   pinMode(led1, OUTPUT);
   pinMode(pin_batery, INPUT);
   servoPara.attach(pinServo);
-  if (!bmp.begin()) {  
-    Serial.println("BMP Falhou!");
-    while (1);
-  }
+  Serial.println("Tentando se conetar ao BMP!");
+  while (!bmp.begin());
   Serial.println("BMP Pronto!!");
   if(get_backup_eeprom(0)!=0){
     for(int i=0; i<4;i++){
       address_eeprom.eeaddress_byte[i]=get_backup_eeprom(i);
     }
   } 
+  for(int i=8; i<13;i++){
+     send_backup_eeprom(i,0); // limpa os locais do registo da ejeção
+  }
+/*backup_eeprom
+ 0-3 -> endereço atual a segravado na eemprom externa
+ 4-7 -> altitude inicial para calibração
+ 8-11 ->time da ejeção;
+ 12 ->registro da ejeção
+*/
 }
 
 void loop() {
